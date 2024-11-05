@@ -1,0 +1,99 @@
+#!/bin/sh 
+
+# Must be called with interface, i.e
+# wgc-watchdog 1
+
+IF=wgc$1
+
+wg_failed=0
+##########################################
+# Step 1 check ip-tables, if router refreshed iptables WG entrys may
+# have been removed, check so they are there. if not start wireguard again to get them back.
+        if ! iptables -t filter -L -v | grep $IF ; then
+                logger "FILTER table entries removed, restarting Wireguard $IF"
+		wg_failed=1
+        fi
+
+        if ! iptables -t nat -L -v | grep $IF ; then
+                logger "NAT table entries removed, restarting wireguard $IF"
+		wg_failed=1
+        fi
+
+        if ! iptables -t mangle -L -v | grep $IF ; then
+                logger "MANGLE table entries removed, restarting wireguard $IF"
+		wg_failed=1
+        fi
+
+##########################################
+# Step 2 check routing table for reset
+        if ! ip route show table $IF | grep $IF ; then
+                logger "Routing table reset, restarting wireguard $IF"
+		wg_failed=1
+        fi 
+
+##########################################
+# Step 3 check handshake timer
+
+# if no contact, restart wireguard!
+# if no contact in 60min reboot router
+
+#Get amount of seconds since last handshake:
+last_handshake=`wg show $IF latest-handshakes | awk '{print $2}'`
+
+if [ -z "$last_handshake" ] # if variable is empty
+    then
+        logger "Wireguard seems disconnected - restarting $IF"
+        wg_failed=1
+fi
+
+idle_seconds=$((`date +%s`-${last_handshake}))
+
+if [ "$idle_seconds" -gt "200" ]
+    then
+	logger "Wireguard handshake failed - restarting $IF"
+	wg_failed=1
+fi
+
+
+##########################################
+#       Ping Test
+###################
+IF_IP=$(nvram get "$IF"_addr | cut -d '/' -f1)
+ip rule add from $IF_IP lookup $IF prio 10
+
+tries=0
+while [[ $tries -lt 5 ]]
+   do
+        if ping -I $IF -c 1 -w 1 8.8.8.8
+        then
+		 break #if successful, no need to continue
+        fi
+   tries=$(( $tries + 1 ))
+   done
+if [ "$tries" -eq "5" ] #if we failed all 5 times
+then
+	 logger "Ping failed - restarting VPN"
+        wg_failed=1
+fi
+ip rule del prio 10
+
+##########################################
+# Act on result
+####################
+if [ "$wg_failed" -eq "1" ]
+    then
+	  service "restart_wgc $1"
+#        if ! cru l | grep "RebootCron"
+#            then
+#                MIN=`date +"%M"` # Get current minutes
+#                cru a RebootCron "$MIN * * * * reboot" #Create cron job to restart router in 60 min
+#                logger "Initiating Reboot Timer - system will reboot in 1 hour if internet is not reconnected"
+#        fi
+#    else
+#	if cru l | grep "RebootCron"
+#  	   then
+#  		cru d RebootCron
+#		logger "Internet ok again - Removing Reboot Timer"
+#	fi
+fi
+###########################################
