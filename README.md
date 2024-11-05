@@ -27,7 +27,7 @@ the script could be executed from ssh by adding the wgc number after it. 1 for w
 ```
 for a single check on wgc2
 
-currently this will splash some output on the screen from its checks. I will look into improving it's output in the future.
+currently this will splash some output on the screen from its checks. I will look into improving it's output in the future. Check router syslog for any script outputs. But if all checks pass it will not output anything to syslog.
 
 the idea is that the script should be run periodically on the router, using cron, like:
 ```sh
