@@ -6,13 +6,13 @@
 IF=wgc$1
 
 ENABLED=$(nvram get "$IF"_enable)
-if [ -z "$ENABLED" ] || [ "$ENABLED" -ne "1" ] ; then
-   logger "Interface $IF not found or not enabled - exiting"
-   echo "Interface $IF not found or not enabled - exiting"
-   echo " "
-   echo "usage:"
-   echo "/jffs/scripts/wgc-watchdog 2     - check wgc2"
-   echo "/jffs/scripts/wgc-watchdog 3     - check wgc3"
+if [ -z "$1" ] || [ -z "$ENABLED" ] || [ "$ENABLED" -ne "1" ] ; then
+   logger "Interface $IF not found or not enabled - exiting"
+   echo "Interface $IF not found or not enabled - exiting"
+   echo " "
+   echo "usage:"
+   echo "/jffs/scripts/wgc-watchdog 2     - check wgc2"
+   echo "/jffs/scripts/wgc-watchdog 3     - check wgc3"
    echo " "
    exit 0
 fi
