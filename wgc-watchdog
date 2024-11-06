@@ -73,9 +73,10 @@ ip rule del prio 10
 ##########################################
 # Act on result
 ####################
-if [ "$wg_failed" -eq "1" ]
-    then
-	  service "restart_wgc $1"
+if [ "$wg_failed" -eq "1" ]; then
+   service "restart_wgc $1"
+else
+   echo "$IF tests succeeded, no action needed"
 #        if ! cru l | grep "RebootCron"
 #            then
 #                MIN=`date +"%M"` # Get current minutes
