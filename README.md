@@ -6,7 +6,7 @@ This script is still under development so please use it with care. it still have
 # Install instructions
 to download the script:
 ```sh
-curl --retry 3 "https://raw.githubusercontent.com/ZebMcKayhan/https://github.com/ZebMcKayhan/Asus-merlin-Wireguard-Watchdog/main/wgc-watchdog" -o "/jffs/scripts/wgc-watchdog" && chmod 755 "/jffs/scripts/wgc-watchdog"
+curl --retry 3 "https://raw.githubusercontent.com/ZebMcKayhan/Asus-merlin-Wireguard-Watchdog/main/wgc-watchdog" -o "/jffs/scripts/wgc-watchdog" && chmod 755 "/jffs/scripts/wgc-watchdog"
 ```
 
 # About the script
