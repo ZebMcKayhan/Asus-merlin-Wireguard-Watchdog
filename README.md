@@ -27,7 +27,9 @@ the script could be executed from ssh by adding the wgc number after it. 1 for w
 ```
 for a single check on wgc2
 
-currently this will splash some output on the screen from its checks. I will look into improving it's output in the future. Check router syslog for any script outputs. But if all checks pass it will not output anything to syslog.
+I will output each successful or failed test directly on screen. 
+I encourage everyone to test the script this way first. 
+Check router syslog for any script outputs, but if all checks pass it will not output anything to syslog.
 
 the idea is that the script should be run periodically on the router, using cron, like:
 ```sh
@@ -36,4 +38,48 @@ cru a WatchWgc2 "*/10 * * * * /jffs/scripts/wgc-watchdog 2"
 
 It would be needed to setup this in firmware hook script wgclient-start and removed in wgclient-stop
 
-more instructions will come...
+to do this you will need to enable "custom scripts" in the router gui if you have not already done so.
+
+then edit/create the file that firmware executes when starting a WG client:
+```sh
+nano /jffs/scripts/wgclient-start
+```
+populate the file with:
+```sh
+#!/bin/sh 
+
+if [ "$1" -eq "2" ]; then # only for wgc2
+   cru a WatchWgc2 "*/10 * * * * /jffs/scripts/wgc-watchdog 2"
+fi
+```
+adjust according to your needs.
+
+save & exit nano (ctrl+x - y - enter)
+
+then edit/create the file that firmware executes when stopping a WG client:
+```sh
+nano /jffs/scripts/wgclient-stop
+```
+and populate with:
+```sh
+#!/bin/sh 
+
+if [ "$1" -eq "2" ]; then # only for wgc2
+   cru d WatchWgc2
+fi
+```
+again, adjust according to your setup.
+
+save & exit nano
+
+now we need to make these files we have created executable:
+```sh
+chmod +x /jffs/scripts/wgclient-start
+```
+and
+```sh
+chmod +x /jffs/scripts/wgclient-stop
+```
+and that's it!
+
+you will need to restart your WG clients for these files to execute and start the cron job that makes periodically checks.
