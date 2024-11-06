@@ -40,6 +40,8 @@ if [ "$idle_seconds" -gt "200" ] ; then
    logger "Wireguard handshake failed - restarting $IF"
    echo "Wireguard handshake failed - restarting $IF"
    wg_failed=1
+else
+   echo "Wireguard $IF handshake ok!"
 fi
 
 ##########################################
