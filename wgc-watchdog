@@ -29,15 +29,17 @@ wg_failed=0
 last_handshake=`wg show $IF latest-handshakes | awk '{print $2}'`
 
 if [ -z "$last_handshake" ] ; then # if variable is empty
-        logger "Wireguard seems disconnected - restarting $IF"
-        wg_failed=1
+   logger "Wireguard seems disconnected - restarting $IF"
+   echo "Wireguard seems disconnected - restarting $IF"
+   wg_failed=1
 fi
 
 idle_seconds=$((`date +%s`-${last_handshake}))
 
 if [ "$idle_seconds" -gt "200" ] ; then
-	logger "Wireguard handshake failed - restarting $IF"
-	wg_failed=1
+   logger "Wireguard handshake failed - restarting $IF"
+   echo "Wireguard handshake failed - restarting $IF"
+   wg_failed=1
 fi
 
 ##########################################
@@ -49,16 +51,20 @@ ip rule add from $IF_IP lookup $IF prio 10
 tries=0
 while [[ $tries -lt 5 ]]
    do
-        if ping -I $IF -c 1 -w 1 8.8.8.8
-        then
-		 break #if successful, no need to continue
-        fi
+      ping -I $IF -c 1 -w 1 8.8.8.8 >/dev/null 2>&1
+      if [ $? -eq "0" ]
+      then
+         break #if successful, no need to continue
+      fi
    tries=$(( $tries + 1 ))
    done
 if [ "$tries" -eq "5" ] #if we failed all 5 times
 then
-	 logger "Ping failed - restarting VPN"
-        wg_failed=1
+   logger "Ping failed - restarting $IF"
+   echo "Ping failed - restarting $IF"
+   wg_failed=1
+else
+   echo "Ping via $IF succeeded!"
 fi
 ip rule del prio 10
 
