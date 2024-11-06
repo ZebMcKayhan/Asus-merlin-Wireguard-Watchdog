@@ -11,8 +11,6 @@ curl --retry 3 "https://raw.githubusercontent.com/ZebMcKayhan/Asus-merlin-Wiregu
 
 # About the script
 The scripts makes the following checks when executed:
-- Firewall rules related to the interface (filter, nat, mangle)
-- Policy route table existence and routes
 - Wireguard handshake timer existence and within limits
 - It pings 8.8.8.8 using selected interface and checks for response.
 
