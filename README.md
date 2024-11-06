@@ -38,7 +38,7 @@ cru a WatchWgc2 "*/10 * * * * /jffs/scripts/wgc-watchdog 2"
 
 It would be needed to setup this in firmware hook script wgclient-start and removed in wgclient-stop
 
-to do this you will need to enable "custom scripts" in the router gui if you have not already done so.
+to do this you will need to set "Enable JFFS custom scripts and configs" to yes in the router gui (Administration -> system) if you have not already done so.
 
 then edit/create the file that firmware executes when starting a WG client:
 ```sh
