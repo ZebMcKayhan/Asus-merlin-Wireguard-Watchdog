@@ -8,11 +8,13 @@ to download the script:
 ```sh
 curl --retry 3 "https://raw.githubusercontent.com/ZebMcKayhan/Asus-merlin-Wireguard-Watchdog/main/wgc-watchdog" -o "/jffs/scripts/wgc-watchdog" && chmod 755 "/jffs/scripts/wgc-watchdog"
 ```
+For further instructions on how to use the script or how to make it periodically, check under "Using the script"
+
 
 # About the script
 The scripts makes the following checks when executed:
 - Wireguard handshake timer existence and within limits
-- It pings 8.8.8.8 using selected interface and checks for response.
+- It pings 8.8.8.8 (or custom ip) using selected interface and checks for response.
 
 If any checks fails it will notify in router syslog and attempt to restart the interface.
 
@@ -23,18 +25,28 @@ the script could be executed from ssh by adding the wgc number after it. 1 for w
 ```sh
 /jffs/scripts/wgc-watchdog 2
 ```
-for a single check on wgc2
+for a single check on wgc2, by pinging 8.8.8.8. typical for an internet vpn client.
 
-I will output each successful or failed test directly on screen. 
+if you want to use this on I.e site-2-site script, 8.8.8.8 may not be available over the tunnel. in such case you may specify the IP it should ping by i.e:
+```sh
+/jffs/scripts/wgc-watchdog 2 192.168.2.1
+```
+but beware, the ip has no checks so if it's in wrong format the script may fail or think vpn is not working and try to restart it
+
+The script will output each successful or failed test directly on screen. 
 I encourage everyone to test the script this way first. 
 Check router syslog for any script outputs, but if all checks pass it will not output anything to syslog.
 
-the idea is that the script should be run periodically on the router, using cron, like:
+The idea is that the script should be run periodically on the router, using cron, like:
 ```sh
 cru a WatchWgc2 "*/10 * * * * /jffs/scripts/wgc-watchdog 2"
 ```
+or if you want to specify custom ip to ping:
+```sh
+cru a WatchWgc2 "*/10 * * * * /jffs/scripts/wgc-watchdog 2 10.6.0.1"
+```
 
-It would be needed to setup this in firmware hook script wgclient-start and removed in wgclient-stop
+It would be needed to setup this in firmware hook script wgclient-start and removed in wgclient-stop to make this periodic checks start when the client is started and stopped when the client is disabled in the GUI
 
 to do this you will need to set "Enable JFFS custom scripts and configs" to yes in the router gui (Administration -> system) if you have not already done so.
 
