@@ -59,7 +59,6 @@ IF_IP=$(nvram get "$IF"_addr | cut -d '/' -f1)
 ip rule add from $IF_IP lookup $IF prio 10
 # method2 2 - set rp_filter temporary to loose:
 #PREV_RPFILT=$(cat /proc/sys/net/ipv4/conf/"$IF"/rp_filter)
-#echo "Original rp_filter value is: $PREV_RPFILT"
 #CHANGED=0
 #if [ $PREV_RPFILT -eq "1" ] ; then
 #   echo 2 > /proc/sys/net/ipv4/conf/"$IF"/rp_filter
@@ -91,7 +90,6 @@ ip rule del prio 10
 # methode 2 - restore:
 #if [ $CHANGED -eq "1" ] ; then
 #   echo $PREV_RPFILT > /proc/sys/net/ipv4/conf/"$IF"/rp_filter
-#   echo "changed rp_filter back to: $PREV_RPFILT"
 #fi
 ##########################################
 # Act on result
