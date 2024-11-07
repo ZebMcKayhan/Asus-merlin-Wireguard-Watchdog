@@ -11,14 +11,21 @@ if [ -z "$1" ] || [ -z "$ENABLED" ] || [ "$ENABLED" -ne "1" ] ; then
    echo "Interface $IF not found or not enabled - exiting"
    echo " "
    echo "usage:"
-   echo "/jffs/scripts/wgc-watchdog 2     - check wgc2"
-   echo "/jffs/scripts/wgc-watchdog 3     - check wgc3"
+   echo "/jffs/scripts/wgc-watchdog 2              - check wgc2 by ping 8.8.8.8"
+   echo "/jffs/scripts/wgc-watchdog 3              - check wgc3 by ping 8.8.8.8"
+   echo "/jffs/scripts/wgc-watchdog 2 192.168.2.1  - check wgc2 by ping 192.168.2.1"
    echo " "
    exit 0
 fi
 
-wg_failed=0
+# custom ping target ip?
+if [ -z "$2" ] ; then
+   IP_PING=8.8.8.8 #if nothing given
+else
+   IP_PING=$2
+fi
 
+wg_failed=0
 ##########################################
 # check handshake timer
 ########################
@@ -53,7 +60,7 @@ ip rule add from $IF_IP lookup $IF prio 10
 tries=0
 while [[ $tries -lt 5 ]]
    do
-      ping -I $IF -c 1 -w 1 8.8.8.8 >/dev/null 2>&1
+      ping -I $IF -c 1 -w 1 $IP_PING >/dev/null 2>&1
       if [ $? -eq "0" ]
       then
          break #if successful, no need to continue
@@ -74,7 +81,7 @@ ip rule del prio 10
 # Act on result
 ####################
 if [ "$wg_failed" -eq "1" ]; then
-   service "restart_wgc $1"
+   service "restart_wgc $1" >/dev/null 2>&1
 else
    echo "$IF tests succeeded, no action needed"
 #        if ! cru l | grep "RebootCron"
