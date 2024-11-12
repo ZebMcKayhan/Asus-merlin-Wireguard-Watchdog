@@ -1,7 +1,12 @@
 # Asus-merlin-Wireguard-Watchdog
 Example Wireguard watchdog script for Asuswrt-merlin
 
-This script is still under development so please use it with care. It have basic checks so selected Wireguard interface is active or enabled. 
+Please use this script as you wish, fork it, modify it for your needs, but please share your result.
+
+It have basic checks so selected Wireguard interface is active or enabled. 
+
+Wireguard should normally not require any restarting since there is no connection in that sense. Nothing really changes when you restart it (or should not). If you do find that your Wireguard infact stops working at times and restarting it makes it work it may mean there is an issue lurking in your system. While this watchdog script can benefit you by relieve you of restarting it, you are advised to hunt down the reason for it to stop work.
+
 
 # Install instructions
 to download the script:
