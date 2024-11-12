@@ -55,6 +55,7 @@ for system state before the interface was restarted. And here
 ```
 for system state after the interface was restarted.
 Comparing these files to each other and you could figure out what is changing.
+Please note that the log files contains sensitive info, like your public ip and wg public keys. Do not post them publically without obfuscating them.
 
 The idea is that the script should be run periodically on the router, using cron, like:
 ```sh
