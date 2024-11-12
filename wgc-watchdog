@@ -39,16 +39,15 @@ if [ -z "$last_handshake" ] ; then # if variable is empty
    logger -t $(basename $0) "Wireguard seems disconnected - restarting $IF"
    echo "Wireguard seems disconnected - restarting $IF"
    wg_failed=1
-fi
-
-idle_seconds=$((`date +%s`-${last_handshake}))
-
-if [ "$idle_seconds" -gt "200" ] ; then
-   logger -t $(basename $0) "Wireguard handshake failed - restarting $IF"
-   echo "Wireguard handshake failed - restarting $IF"
-   wg_failed=1
 else
-   echo "Wireguard $IF handshake ok!"
+   idle_seconds=$((`date +%s`-${last_handshake}))
+   if [ "$idle_seconds" -gt "200" ] ; then
+      logger -t $(basename $0) "Wireguard handshake failed - restarting $IF"
+      echo "Wireguard handshake failed - restarting $IF"
+      wg_failed=1
+   else
+      echo "Wireguard $IF handshake ok!"
+   fi
 fi
 
 ##########################################
