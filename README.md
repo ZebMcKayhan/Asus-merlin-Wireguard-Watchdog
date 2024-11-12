@@ -5,8 +5,7 @@ Please use this script as you wish, fork it, modify it for your needs, but pleas
 
 It have basic checks so selected Wireguard interface is active or enabled. 
 
-Wireguard should normally not require any restarting since there is no connection in that sense. Nothing really changes when you restart it (or should not). If you do find that your Wireguard infact stops working at times and restarting it makes it work it may mean there is an issue lurking in your system. While this watchdog script can benefit you by relieve you of restarting it, you are advised to hunt down the reason for it to stop work.
-
+Wireguard should normally not require any restarting since there is no connection in that sense. Nothing really changes when you restart it (or should not). If you do find that your Wireguard infact stops working at times and restarting it makes it work it may mean there is an issue lurking in your system. While this watchdog script can benefit you by relieve you of restarting it, you are advised to hunt down the reason for it to stop work. Use the scripts log-files to help you figure out what is happening.
 
 # Install instructions
 to download the script:
@@ -25,6 +24,10 @@ If any checks fails it will notify in router syslog and attempt to restart the i
 
 A currently commented feature is if it fails it starts a timer that reboots the router if it still fails after 1 hour. If you want to use this feature you have to remove the brackets near the end. I may enable this feature if the script gets mature enough.
 
+To help debugging, the script saves log files of WG output, Routing rules and routes (both main and policy table) as well as firewall Filter, Nat and mangle. Log files are created both before and after the restart so you may do a compare-by-content on these files and figure out what have changed.
+
+The log files are placed in ram folder (/tmp/) so you don't need to worry about wearing down router flash if you end up with an interface restarting every 10min for a longer time.
+
 # Using the script
 the script could be executed from ssh by adding the wgc number after it. 1 for wgc1, 2 for wgc2 et.c
 ```sh
@@ -41,6 +44,17 @@ but beware, the ip has no checks so if it's in wrong format the script may fail 
 The script will output each successful or failed test directly on screen. 
 I encourage everyone to test the script this way first. 
 Check router syslog for any script outputs, but if all checks pass it will not output anything to syslog.
+
+If the tests fails and the interface is restarted, the script produces log files here:
+```sh
+/tmp/wgc-watcdog_wgc1_before.log
+```
+for system state before the interface was restarted. And here
+```sh
+/tmp/wgc-watcdog_wgc1_after.log 
+```
+for system state after the interface was restarted.
+Comparing these files to each other and you could figure out what is changing.
 
 The idea is that the script should be run periodically on the router, using cron, like:
 ```sh
