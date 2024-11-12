@@ -94,7 +94,44 @@ ip rule del prio 10
 # Act on result
 ####################
 if [ "$wg_failed" -eq "1" ]; then
+   LOG_FILE=/tmp/wgc-watcdog_before.log 
+   echo "*** wg show $IF ***" > $LOG_FILE 
+   echo "$(wg show $IF)" >> $LOG_FILE 
+   echo "*** ip rule ***" >> $LOG_FILE 
+   echo "$(ip rule)" >> $LOG_FILE 
+   echo "*** ip route show table main ***" >> $LOG_FILE 
+   echo "$(ip route show table main)" >> $LOG_FILE 
+   echo "*** ip route show table $IF ***" >> $LOG_FILE 
+   echo "$(ip route show table $IF)" >> $LOG_FILE 
+   echo "*** iptables -nvL -t filter ***" >> $LOG_FILE 
+   echo "$(iptables -nvL -t filter)" >> $LOG_FILE 
+   echo "*** iptables -nvL -t nat ***" >> $LOG_FILE 
+   echo "$(iptables -nvL -t nat)" >> $LOG_FILE 
+   echo "*** iptables -nvL -t mangle ***" >> $LOG_FILE
+   echo "$(iptables -nvL -t mangle)" >> $LOG_FILE
+   logger -t $(basename $0) "Saving WG, Routes and Firewall before restarting $IF to $LOG_FILE"
+   echo "Saving WG, Routes and Firewall before restarting $IF to $LOG_FILE"
+
    service "restart_wgc $1" >/dev/null 2>&1
+
+   LOG_FILE=/tmp/wgc-watcdog_after.log 
+   echo "*** wg show $IF ***" > $LOG_FILE 
+   echo "$(wg show $IF)" >> $LOG_FILE 
+   echo "*** ip rule ***" >> $LOG_FILE 
+   echo "$(ip rule)" >> $LOG_FILE 
+   echo "*** ip route show table main ***" >> $LOG_FILE 
+   echo "$(ip route show table main)" >> $LOG_FILE 
+   echo "*** ip route show table $IF ***" >> $LOG_FILE 
+   echo "$(ip route show table $IF)" >> $LOG_FILE 
+   echo "*** iptables -nvL -t filter ***" >> $LOG_FILE 
+   echo "$(iptables -nvL -t filter)" >> $LOG_FILE 
+   echo "*** iptables -nvL -t nat ***" >> $LOG_FILE 
+   echo "$(iptables -nvL -t nat)" >> $LOG_FILE 
+   echo "*** iptables -nvL -t mangle ***" >> $LOG_FILE
+   echo "$(iptables -nvL -t mangle)" >> $LOG_FILE
+   logger -t $(basename $0) "Saving WG, Routes and Firewall after restarting $IF to $LOG_FILE"
+   echo "Saving WG, Routes and Firewall after restarting $IF to $LOG_FILE"
+
 else
    echo "$IF tests succeeded, no action needed"
 #        if ! cru l | grep "RebootCron"
