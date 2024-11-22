@@ -94,7 +94,7 @@ ip rule del prio 10
 # Act on result
 ####################
 if [ "$wg_failed" -eq "1" ]; then
-   LOG_FILE=/tmp/wgc-watcdog_"$IF"_before.log 
+   LOG_FILE=/tmp/wgc-watchdog_"$IF"_before.log 
    echo "*** wg show $IF ***" > $LOG_FILE 
    echo "$(wg show $IF)" >> $LOG_FILE 
    echo "*** ip rule ***" >> $LOG_FILE 
@@ -114,7 +114,7 @@ if [ "$wg_failed" -eq "1" ]; then
 
    service "restart_wgc $1" >/dev/null 2>&1
 
-   LOG_FILE=/tmp/wgc-watcdog_"$IF"_after.log 
+   LOG_FILE=/tmp/wgc-watchdog_"$IF"_after.log 
    echo "*** wg show $IF ***" > $LOG_FILE 
    echo "$(wg show $IF)" >> $LOG_FILE 
    echo "*** ip rule ***" >> $LOG_FILE 
