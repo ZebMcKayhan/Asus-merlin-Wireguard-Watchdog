@@ -47,11 +47,11 @@ Check router syslog for any script outputs, but if all checks pass it will not o
 
 If the tests fails and the interface is restarted, the script produces log files here:
 ```sh
-/tmp/wgc-watcdog_wgc1_before.log
+/tmp/wgc-watchdog_wgc1_before.log
 ```
 for system state before the interface was restarted. And here
 ```sh
-/tmp/wgc-watcdog_wgc1_after.log 
+/tmp/wgc-watchdog_wgc1_after.log 
 ```
 for system state after the interface was restarted.
 Comparing these files to each other and you could figure out what is changing.
