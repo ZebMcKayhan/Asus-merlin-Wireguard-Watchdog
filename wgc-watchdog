@@ -2,12 +2,12 @@
 
 # Must be called with interface, i.e
 # wgc-watchdog 1
-
+LOG_LEVEL=4 #2=Alert, 4=Error, 6=Notice, 8=Debug
 IF=wgc$1
 
 ENABLED=$(nvram get "$IF"_enable)
 if [ -z "$1" ] || [ -z "$ENABLED" ] || [ "$ENABLED" -ne "1" ] ; then
-   logger -t $(basename $0) "Interface $IF not found or not enabled - exiting"
+   logger -p $LOG_LEVEL -t $(basename $0) "Interface $IF not found or not enabled - exiting"
    echo "Interface $IF not found or not enabled - exiting"
    echo " "
    echo "usage:"
@@ -36,13 +36,13 @@ wg_failed=0
 last_handshake=`wg show $IF latest-handshakes | awk '{print $2}'`
 
 if [ -z "$last_handshake" ] ; then # if variable is empty
-   logger -t $(basename $0) "Wireguard seems disconnected - restarting $IF"
+   logger -p $LOG_LEVEL -t $(basename $0) "Wireguard seems disconnected - restarting $IF"
    echo "Wireguard seems disconnected - restarting $IF"
    wg_failed=1
 else
    idle_seconds=$((`date +%s`-${last_handshake}))
    if [ "$idle_seconds" -gt "200" ] ; then
-      logger -t $(basename $0) "Wireguard handshake failed - restarting $IF"
+      logger -p $LOG_LEVEL -t $(basename $0) "Wireguard handshake failed - restarting $IF"
       echo "Wireguard handshake failed - restarting $IF"
       wg_failed=1
    else
@@ -76,7 +76,7 @@ while [[ $tries -lt 5 ]]
    done
 if [ "$tries" -eq "5" ] #if we failed all 5 times
 then
-   logger -t $(basename $0) "Ping failed - restarting $IF"
+   logger -p $LOG_LEVEL -t $(basename $0) "Ping failed - restarting $IF"
    echo "Ping failed - restarting $IF"
    wg_failed=1
 else
@@ -109,7 +109,7 @@ if [ "$wg_failed" -eq "1" ]; then
    echo "$(iptables -nvL -t nat)" >> $LOG_FILE 
    echo "*** iptables -nvL -t mangle ***" >> $LOG_FILE
    echo "$(iptables -nvL -t mangle)" >> $LOG_FILE
-   logger -t $(basename $0) "Saving WG, Routes and Firewall before restarting $IF to $LOG_FILE"
+   logger -p $LOG_LEVEL -t $(basename $0) "Saving WG, Routes and Firewall before restarting $IF to $LOG_FILE"
    echo "Saving WG, Routes and Firewall before restarting $IF to $LOG_FILE"
 
    service "restart_wgc $1" >/dev/null 2>&1
@@ -129,7 +129,7 @@ if [ "$wg_failed" -eq "1" ]; then
    echo "$(iptables -nvL -t nat)" >> $LOG_FILE 
    echo "*** iptables -nvL -t mangle ***" >> $LOG_FILE
    echo "$(iptables -nvL -t mangle)" >> $LOG_FILE
-   logger -t $(basename $0) "Saving WG, Routes and Firewall after restarting $IF to $LOG_FILE"
+   logger -p $LOG_LEVEL -t $(basename $0 "Saving WG, Routes and Firewall after restarting $IF to $LOG_FILE"
    echo "Saving WG, Routes and Firewall after restarting $IF to $LOG_FILE"
 
 else
@@ -138,13 +138,13 @@ else
 #            then
 #                MIN=`date +"%M"` # Get current minutes
 #                cru a RebootCron "$MIN * * * * reboot" #Create cron job to restart router in 60 min
-#                logger -t $(basename $0) "Initiating Reboot Timer - system will reboot in 1 hour if internet is not reconnected"
+#                logger -p $LOG_LEVEL -t $(basename $0) "Initiating Reboot Timer - system will reboot in 1 hour if internet is not reconnected"
 #        fi
 #    else
 #	if cru l | grep "RebootCron"
 #  	   then
 #  		cru d RebootCron
-#		logger -t $(basename $0) "Internet ok again - Removing Reboot Timer"
+#		logger -p $LOG_LEVEL -t $(basename $0) "Internet ok again - Removing Reboot Timer"
 #	fi
 fi
 ###########################################
