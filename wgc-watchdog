@@ -129,7 +129,7 @@ if [ "$wg_failed" -eq "1" ]; then
    echo "$(iptables -nvL -t nat)" >> $LOG_FILE 
    echo "*** iptables -nvL -t mangle ***" >> $LOG_FILE
    echo "$(iptables -nvL -t mangle)" >> $LOG_FILE
-   logger -p $LOG_LEVEL -t $(basename $0 "Saving WG, Routes and Firewall after restarting $IF to $LOG_FILE"
+   logger -p $LOG_LEVEL -t $(basename $0) "Saving WG, Routes and Firewall after restarting $IF to $LOG_FILE"
    echo "Saving WG, Routes and Firewall after restarting $IF to $LOG_FILE"
 
 else
