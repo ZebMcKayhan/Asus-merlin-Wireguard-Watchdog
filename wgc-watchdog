@@ -56,6 +56,7 @@ fi
 # methode 1 - add temporary vpndirector rule:
 IF_IP=$(nvram get "$IF"_addr | cut -d '/' -f1)
 ip rule add from $IF_IP lookup $IF prio 10
+ip -6 rule add from all oif $IF lookup $IF prio 10 >/dev/null 2>&1 #ipv6 fix if ping target is ipv6
 # method2 2 - set rp_filter temporary to loose:
 #PREV_RPFILT=$(cat /proc/sys/net/ipv4/conf/"$IF"/rp_filter)
 #CHANGED=0
@@ -85,6 +86,7 @@ fi
 
 # methode 1 - restore
 ip rule del prio 10
+ip -6 rule del prio 10 >/dev/null 2>&1
 
 # methode 2 - restore:
 #if [ $CHANGED -eq "1" ] ; then
